@@ -126,11 +126,13 @@ def main():
 
         for player in best_players:
             if player in per_36_stats.Player.values:
-                plt.text(per_36_stats.PTS[per_36_stats.Player==player], advanced_stats[advanced_stats.Player==player]['TS%'] + .002, 
-                    player.split()[1], fontdict=dict(color='black', alpha=0.5))
+                x = per_36_stats.PTS[per_36_stats.Player==player]
+                y = advanced_stats[advanced_stats.Player==player]['TS%']
+                plt.text(x.iloc[0], y.iloc[0] + .002, player.split()[1], fontdict=dict(color='black', alpha=0.5))
             elif player + '*' in per_36_stats.Player.values:                
-                plt.text(per_36_stats.PTS[per_36_stats.Player==player + '*'], advanced_stats[advanced_stats.Player==player + '*']['TS%'] + .002, 
-                    player.split()[1], fontdict=dict(color='black', alpha=0.5))
+                x = per_36_stats.PTS[per_36_stats.Player==player + '*']
+                y = advanced_stats[advanced_stats.Player==player + '*']['TS%']           
+                plt.text(x.iloc[0], y.iloc[0] + .002, player.split()[1], fontdict=dict(color='black', alpha=0.5))
             else:
                 continue
 
