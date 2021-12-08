@@ -19,6 +19,10 @@ def load_data(year, stat_type):
     raw = df.drop(df[df.Age == 'Age'].index) # Deletes repeating headers in content
     raw = raw.fillna(0)
     playerstats = raw.drop(['Rk'], axis=1)
+
+    cols=[i for i in playerstats.columns if i not in ['Player','Pos', 'Tm']]
+    for col in cols:
+        playerstats[col]=pd.to_numeric(playerstats[col])
     return playerstats
 
 # Download NBA player stats data
@@ -71,8 +75,21 @@ def main():
 
     st.markdown(filedownload(df_selected_team), unsafe_allow_html=True)
 
-    # Heatmap
-    if st.button('Intercorrelation Heatmap'):
+
+    col1, col2 = st.columns(2)
+
+    show_plot = 0
+
+    with col1:
+        # Heatmap
+        if st.button('Intercorrelation Heatmap'):
+            show_plot = 1            
+    with col2:
+        # Scatter plot
+        if st.button('Points per 36 x TS% Scattergram'):
+            show_plot = 2
+    
+    if show_plot == 1:
         st.header('Intercorrelation Matrix Heatmap')
         df_selected_team.to_csv('output.csv',index=False)
         df = pd.read_csv('output.csv')
@@ -84,6 +101,25 @@ def main():
             f, ax = plt.subplots(figsize=(7, 5))
             ax = sns.heatmap(corr, mask=mask, vmax=1, square=True)
         st.pyplot()
+    elif show_plot == 2:        
+        st.header('Points per 36 x TS% Scatter Plot')
+        per_36_stats = load_data(selected_year, 'per_minute')
+        advanced_stats = load_data(selected_year, 'advanced')
+
+        #Filtering games
+        max_games_played = per_36_stats['G'].max()
+        threshold = int(max_games_played / 2)
+        print(threshold)
+        per_36_stats = per_36_stats[per_36_stats['G'] > threshold]
+        advanced_stats = advanced_stats[advanced_stats['G'] > threshold]
+
+        plt.style.use('seaborn')
+        plt.xlabel("Pts. per 36")
+        plt.ylabel("TS%")
+        plt.scatter(per_36_stats.PTS.values, advanced_stats['TS%'].values, edgecolors='k', alpha=.5)
+        st.pyplot()
+    else:
+        pass
 
 if __name__ == '__main__':
     main()
