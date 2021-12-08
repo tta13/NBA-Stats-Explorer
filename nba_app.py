@@ -50,10 +50,12 @@ def translate_stat_type(stat_type):
     return 'None'
 
 def main():
+    st.markdown('<img src=\"https://cdn.nba.com/logos/nba/nba-logoman-75-word_white.svg\" alt=\"NBA logo\" style=\"width:150px\"> ' , 
+        unsafe_allow_html=True)
     st.title('NBA Stats Explorer')
 
     st.markdown("""
-    This app performs simple webscraping of NBA player stats data!
+      This app performs simple webscraping of NBA player stats data!
     * **Python libraries:** base64, pandas, streamlit
     * **Data source:** [Basketball-reference.com](https://www.basketball-reference.com/).
     """)
