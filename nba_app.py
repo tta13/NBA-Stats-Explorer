@@ -9,6 +9,11 @@ import numpy as np
 baseUrl = 'https://www.basketball-reference.com/leagues/NBA_'
 stat_types = ['per_game', 'totals', 'per_minute', 'advanced']
 st.set_option('deprecation.showPyplotGlobalUse', False)
+best_players = ['James Harden', 'Stephen Curry', 'Kevin Durant', 'LeBron James', 'Giannis Antetokounmpo', 
+    'Kareem Abdul-Jabbar', 'Karl Malone', 'Kobe Bryant', 'Michael Jordan', 'Dirk Nowitzki', 'Wilt Chamberlain',
+    'Shaquille O\'Neal', 'Carmelo Anthony', 'Moses Malone', 'Elvin Hayes', 'Hakeem Olajuwon', 'Oscar Robertson',
+    'Dominique Wilkins', 'Tim Duncan', 'Paul Pierce', 'John Havlicek', 'Kevin Garnett', 'Vince Carter',
+    'Alex English', 'Reggie Miller', 'Jerry West', 'Patrick Ewing', 'Ray Allen', 'Allen Iverson']
 
 # Web scraping of NBA player stats
 @st.cache
@@ -110,13 +115,25 @@ def main():
         max_games_played = per_36_stats['G'].max()
         threshold = int(max_games_played / 2)
         print(threshold)
-        per_36_stats = per_36_stats[per_36_stats['G'] > threshold]
-        advanced_stats = advanced_stats[advanced_stats['G'] > threshold]
+        per_36_stats = per_36_stats[per_36_stats['G'] >= threshold]
+        advanced_stats = advanced_stats[advanced_stats['G'] >= threshold]
 
         plt.style.use('seaborn')
         plt.xlabel("Pts. per 36")
         plt.ylabel("TS%")
         plt.scatter(per_36_stats.PTS.values, advanced_stats['TS%'].values, edgecolors='k', alpha=.5)
+        plt.xlim([0, 40])
+
+        for player in best_players:
+            if player in per_36_stats.Player.values:
+                plt.text(per_36_stats.PTS[per_36_stats.Player==player], advanced_stats[advanced_stats.Player==player]['TS%'] + .002, 
+                    player.split()[1], fontdict=dict(color='black', alpha=0.5))
+            elif player + '*' in per_36_stats.Player.values:                
+                plt.text(per_36_stats.PTS[per_36_stats.Player==player + '*'], advanced_stats[advanced_stats.Player==player + '*']['TS%'] + .002, 
+                    player.split()[1], fontdict=dict(color='black', alpha=0.5))
+            else:
+                continue
+
         st.pyplot()
     else:
         pass
