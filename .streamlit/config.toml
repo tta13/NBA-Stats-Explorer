@@ -1,2 +1,5 @@
 [global]
 dataFrameSerialization = "legacy"
+[theme]
+base="dark"
+primaryColor="#2a87df"
