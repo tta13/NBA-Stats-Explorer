@@ -51,7 +51,7 @@ def translate_stat_type(stat_type):
 
 def main():    
     st.set_option('deprecation.showPyplotGlobalUse', False)
-    icon = Image.open(r"D:\Documentos\Git\Github\NBA-stats-explorer\favicon.ico")
+    icon = Image.open(r"/app/nba-stats-explorer/favicon.ico")
     st.set_page_config('NBA Stats Explorer', icon)
 
 
