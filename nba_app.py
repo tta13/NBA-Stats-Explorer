@@ -4,12 +4,13 @@ import base64
 import matplotlib.pyplot as plt
 import seaborn as sns
 import numpy as np
+import os
 from PIL import Image
 
-
+script_directory = os.getcwd()
 baseUrl = 'https://www.basketball-reference.com/leagues/NBA_'
 stat_types = ['per_game', 'totals', 'per_minute', 'advanced']
-best_players = ['James Harden', 'Stephen Curry', 'Kevin Durant', 'LeBron James', 'Giannis Antetokounmpo', 
+best_players = ['Nikola Jokić', 'James Harden', 'Stephen Curry', 'Kevin Durant', 'LeBron James', 'Giannis Antetokounmpo', 
     'Kareem Abdul-Jabbar', 'Karl Malone', 'Kobe Bryant', 'Michael Jordan', 'Dirk Nowitzki', 'Wilt Chamberlain',
     'Shaquille O\'Neal', 'Carmelo Anthony', 'Moses Malone', 'Elvin Hayes', 'Hakeem Olajuwon', 'Oscar Robertson',
     'Dominique Wilkins', 'Tim Duncan', 'Paul Pierce', 'John Havlicek', 'Kevin Garnett', 'Vince Carter',
@@ -51,7 +52,7 @@ def translate_stat_type(stat_type):
 
 def main():    
     st.set_option('deprecation.showPyplotGlobalUse', False)
-    icon = Image.open(r"/app/nba-stats-explorer/favicon.ico")
+    icon = Image.open(os.path.join(script_directory, 'favicon.ico'))
     st.set_page_config('NBA Stats Explorer', icon)
 
 
