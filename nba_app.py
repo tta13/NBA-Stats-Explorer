@@ -10,7 +10,7 @@ from PIL import Image
 script_directory = os.getcwd()
 baseUrl = 'https://www.basketball-reference.com/leagues/NBA_'
 stat_types = ['per_game', 'totals', 'per_minute', 'advanced']
-best_players = ['Nikola Jokić', 'James Harden', 'Stephen Curry', 'Kevin Durant', 'LeBron James', 'Giannis Antetokounmpo', 
+best_players = ['Nikola Jokić', 'Joel Embiid', 'James Harden', 'Stephen Curry', 'Kevin Durant', 'LeBron James', 'Giannis Antetokounmpo', 
     'Kareem Abdul-Jabbar', 'Karl Malone', 'Kobe Bryant', 'Michael Jordan', 'Dirk Nowitzki', 'Wilt Chamberlain',
     'Shaquille O\'Neal', 'Carmelo Anthony', 'Moses Malone', 'Elvin Hayes', 'Hakeem Olajuwon', 'Oscar Robertson',
     'Dominique Wilkins', 'Tim Duncan', 'Paul Pierce', 'John Havlicek', 'Kevin Garnett', 'Vince Carter',
