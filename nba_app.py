@@ -99,7 +99,7 @@ def main():
             show_plot = 1            
     with col2:
         # Scatter plot
-        if st.button('Points per 36 x TS% Scattergram'):
+        if st.button('Points per 75 x TS% Scattergram'):
             show_plot = 2
     
     if show_plot == 1:
@@ -115,30 +115,34 @@ def main():
             ax = sns.heatmap(corr, mask=mask, vmax=1, square=True)
         st.pyplot()
     elif show_plot == 2:        
-        st.header('Points per 36 x TS% Scatter Plot')
-        per_36_stats = load_data(selected_year, 'per_minute')
+        st.header('Points per 75 x TS% Scatter Plot')
+        per_100_stats = load_data(selected_year, 'per_poss')
         advanced_stats = load_data(selected_year, 'advanced')
 
         #Filtering games
-        max_games_played = per_36_stats['G'].max()
+        max_games_played = per_100_stats['G'].max()
         threshold = int(max_games_played / 2)
-        print(threshold)
-        per_36_stats = per_36_stats[per_36_stats['G'] >= threshold]
+        # print(threshold)
+        per_100_stats = per_100_stats[per_100_stats['G'] >= threshold]
+        # Calculating points per 75 
+        per_100_stats['PTS'] = per_100_stats['PTS'].apply(lambda x: x*.75)
+        per_75_stats = per_100_stats
+
         advanced_stats = advanced_stats[advanced_stats['G'] >= threshold]
 
         plt.style.use('seaborn')
-        plt.xlabel("Pts. per 36")
+        plt.xlabel("Pts. per 75")
         plt.ylabel("TS%")
-        plt.scatter(per_36_stats.PTS.values, advanced_stats['TS%'].values, edgecolors='k', alpha=.5)
+        plt.scatter(per_75_stats.PTS.values, advanced_stats['TS%'].values, edgecolors='k', alpha=.5)
         plt.xlim([0, 40])
 
         for player in best_players:
-            if player in per_36_stats.Player.values:
-                x = per_36_stats.PTS[per_36_stats.Player==player]
+            if player in per_75_stats.Player.values:
+                x = per_75_stats.PTS[per_75_stats.Player==player]
                 y = advanced_stats[advanced_stats.Player==player]['TS%']
                 plt.text(x.iloc[0], y.iloc[0] + .002, player.split()[1], fontdict=dict(color='black', alpha=0.5))
-            elif player + '*' in per_36_stats.Player.values:                
-                x = per_36_stats.PTS[per_36_stats.Player==player + '*']
+            elif player + '*' in per_75_stats.Player.values:                
+                x = per_75_stats.PTS[per_75_stats.Player==player + '*']
                 y = advanced_stats[advanced_stats.Player==player + '*']['TS%']           
                 plt.text(x.iloc[0], y.iloc[0] + .002, player.split()[1], fontdict=dict(color='black', alpha=0.5))
             else:
