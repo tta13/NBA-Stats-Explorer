@@ -6,6 +6,8 @@ from PIL import Image
 
 script_directory = os.getcwd()
 
+ordinal = lambda n: "%d%s" % (n,"tsnrhtdd"[(n//10%10!=1)*(n%10<4)*n%10::4])
+
 def load_data(year: int, stat_type: str):
     if stat_type == 'play-by-play':
         return get_players_data(year, stat_type, 1)
@@ -79,7 +81,7 @@ def main():
     with st.spinner('Loading season summary...'):
         st.header(f'{selected_year} Season Summary')
         st.write(f"""
-            The {selected_year} was the {selected_year - 1946}th season of the [National Basketball Association](https://en.wikipedia.org/wiki/National_Basketball_Association). 
+            The {selected_year} season was the {ordinal(selected_year - 1946)} of the [National Basketball Association](https://en.wikipedia.org/wiki/National_Basketball_Association). 
             As usual, we have to analyze its vast data and explore player performances to decide which players performed the best!
         """)
 
