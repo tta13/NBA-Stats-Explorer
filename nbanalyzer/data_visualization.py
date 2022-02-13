@@ -18,6 +18,9 @@ def add_player_labels(players: list[str], df1: DataFrame, df2: DataFrame, x_data
             continue
 
 def gen_scoring_efficiency_plot(season: int, best_players: list[str]):
+    """
+    Generates points per 75 x TS% plot
+    """
     per_100_stats = get_players_data(season, 'per_poss')
     advanced_stats = get_players_data(season, 'advanced')
     
@@ -34,6 +37,9 @@ def gen_scoring_efficiency_plot(season: int, best_players: list[str]):
     add_player_labels(best_players, per_75_stats, advanced_stats, 'PTS', 'TS%', y_offset=.002)
 
 def gen_on_off_plot(season: int, best_players: list[str]):
+    """
+    Generates On-Off, OnCourt and BPM plots
+    """
     play_by_play = get_players_data(season, 'play-by-play', 1)
     advanced_stats = get_players_data(season, 'advanced')
 
@@ -81,6 +87,9 @@ def gen_on_off_plot(season: int, best_players: list[str]):
             continue
 
 def draw_intercorrelation_heatmap(season: int):
+    """
+    Generates intercorrelation heatmap from stats
+    """
     df_selected_team = get_players_data(season, 'per_game')
 
     corr = df_selected_team.corr()
