@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 from pandas import DataFrame
 import numpy as np
 import seaborn as sns
+import copy
 from .basketball_reference_api import *
 
 def add_player_labels(players: list[str], df1: DataFrame, df2: DataFrame, x_data: str, y_data: str, x_offset: float = 0., y_offset: float = 0.):
@@ -21,7 +22,7 @@ def gen_scoring_efficiency_plot(season: int, best_players: list[str]):
     """
     Generates points per 75 x TS% plot
     """
-    per_100_stats = get_players_data(season, 'per_poss').copy()
+    per_100_stats = copy.deepcopy(get_players_data(season, 'per_poss'))
     advanced_stats = get_players_data(season, 'advanced')
     
     # Calculating points per 75 
