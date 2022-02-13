@@ -21,7 +21,7 @@ def gen_scoring_efficiency_plot(season: int, best_players: list[str]):
     """
     Generates points per 75 x TS% plot
     """
-    per_100_stats = get_players_data(season, 'per_poss')
+    per_100_stats = get_players_data(season, 'per_poss').copy()
     advanced_stats = get_players_data(season, 'advanced')
     
     # Calculating points per 75 
