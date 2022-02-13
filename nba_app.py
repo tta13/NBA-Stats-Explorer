@@ -78,21 +78,21 @@ def main():
     with st.spinner('Loading season summary...'):
         st.header(f'{selected_year} Season Summary')
         st.write(f"""
-            The {selected_year} was the {selected_year - 1946}th season of the [National Basketball Association](https://en.wikipedia.org/wiki/National_Basketball_Association).
-             As usual, we have to analyze its vast data and explore player performances to decide which players performed the best!
+            The {selected_year} was the {selected_year - 1946}th season of the [National Basketball Association](https://en.wikipedia.org/wiki/National_Basketball_Association). 
+            As usual, we have to analyze its vast data and explore player performances to decide which players performed the best!
         """)
 
         if selected_year < 2022:
             with st.expander(f'{selected_year} NBA MVP'):
-                st.header('MVP')
                 st.write(f"""
+                    ### MVP
                     This season's MVP was **{best_players[0]}** who won the prize against the likes of {best_players[1]}, {best_players[2]}
                     and {best_players[3]}.
                 """)
 
         with st.expander(f'Intercorrelation Matrix Heatmap - {selected_year}'):
-            st.header('Intercorrelation Matrix Heatmap')
             st.markdown("""
+                ### Intercorrelation Matrix Heatmap
                 The matrix is calculated from a cross-tabulation and shows how statistically similar all pairs of variables are in their 
                 distributions across the various samples. The table below shows the intercorrelations between per game player stats.
             """)
@@ -100,10 +100,10 @@ def main():
                 draw_intercorrelation_heatmap(selected_year)
                 st.pyplot()
 
-        with st.expander(f'Points per 75 x TS% - {selected_year}'):
-            st.header('Points per 75 possessions x TS% Scatter Plot')
+        with st.expander(f'Scoring - {selected_year}'):
             st.markdown("""
-                The scatter plot shows the relation between \"inflation adjusted\" scoring and efficiency from players across the league, 
+                ### Points per 75 possessions x TS% Scatter Plot
+                The scatter plot is used to analyze the relation between \"inflation adjusted\" scoring and efficiency from players across the league, 
                 highlighting the top 10 MVP candidates.
             """)
             with st.spinner('Loading scatter plot'):
@@ -111,13 +111,14 @@ def main():
                 st.pyplot()
 
         if(selected_year >= 1997):
-            with st.expander(f'Impact metrics {selected_year}'):
-                st.header('Impact metrics')
+            with st.expander(f'Impact - {selected_year}'):
                 st.markdown("""
+                    ### Impact metrics
                     Impact metrics are used to measure a player's impact on the success of a given team. In this selection:
                     * **On-Off**: Average difference between the Plus/Minus when player is on the court vs. off the court.
                     * **OnCourt**: Plus/Minus Per 100 Possessions (On Court only).
                     * **BPM**: A box score estimate of the points per 100 possessions a player contributed above a league-average player, translated to an average team.
+                    PS: highlighting top MVP cadidates.
                 """)
                 gen_on_off_plot(selected_year, best_players)
                 st.pyplot()
