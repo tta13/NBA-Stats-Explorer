@@ -73,7 +73,8 @@ def main():
     if selected_year < 2022:
         best_players = get_mvp_voting(selected_year)
     else:
-        best_players = ['Nikola Jokić', 'Joel Embiid', 'James Harden', 'Stephen Curry', 'Kevin Durant', 'LeBron James', 'Giannis Antetokounmpo']
+        best_players = ['Nikola Jokić', 'Joel Embiid', 'Chris Paul', 'Stephen Curry', 'Kevin Durant', 'Giannis Antetokounmpo',
+            'Ja Morant', 'Luka Dončić', 'Devin Booker', 'DeMar DeRozan', 'Jimmy Butler']
     
     with st.spinner('Loading season summary...'):
         st.header(f'{selected_year} Season Summary')
