@@ -18,9 +18,9 @@ best_players = ['Nikola Jokić', 'Joel Embiid', 'James Harden', 'Stephen Curry',
 
 # Web scraping of NBA player stats
 @st.cache
-def load_data(year, stat_type):
+def load_data(year, stat_type, header = 0):
     url = baseUrl + str(year) + '_' + stat_type + '.html'
-    html = pd.read_html(url, header = 0)
+    html = pd.read_html(url, header = header)
     df = html[0]
     raw = df.drop(df[df.Age == 'Age'].index) # Deletes repeating headers in content
     raw = raw.fillna(0)
@@ -28,7 +28,10 @@ def load_data(year, stat_type):
 
     cols=[i for i in playerstats.columns if i not in ['Player','Pos', 'Tm']]
     for col in cols:
-        playerstats[col]=pd.to_numeric(playerstats[col])
+        try:
+            playerstats[col]=pd.to_numeric(playerstats[col])
+        except ValueError:
+            playerstats[col]=playerstats[col]
     return playerstats
 
 # Download NBA player stats data
@@ -50,6 +53,73 @@ def translate_stat_type(stat_type):
         return 'Advanced'
     return 'None'
 
+def gen_on_off_stats(selected_year):
+    st.header('Impact metrics')
+    play_by_play = load_data(selected_year, 'play-by-play', 1)
+    advanced_stats = load_data(selected_year, 'advanced')
+
+    #Filtering games
+    max_games_played = play_by_play['G'].max()
+    threshold = int(max_games_played / 2)
+    
+    play_by_play = play_by_play[play_by_play['G'] >= threshold]
+
+    advanced_stats = advanced_stats[advanced_stats['G'] >= threshold]
+
+    plt.style.use('seaborn')
+    plt.ylabel('Plus/Minus')
+    plt.plot(np.zeros_like(play_by_play['On-Off'].values) -.25, play_by_play['On-Off'].values, alpha=.5, marker='o', linestyle='')    
+    plt.plot(np.zeros_like(play_by_play['OnCourt'].values), play_by_play['OnCourt'].values, alpha=.5, marker='o', linestyle='')
+    plt.plot(np.zeros_like(advanced_stats.BPM.values) + .25, advanced_stats.BPM.values, alpha=.5, marker='o', linestyle='')
+    plt.ylim(bottom=0)
+    plt.xlim([-.5,.5])
+    plt.xticks([-.25, 0, .25], ['On-Off', 'OnCourt', 'BPM'])
+
+    for player in best_players:
+        if player in play_by_play.Player.values:
+            x = -.2498
+            y = play_by_play[play_by_play.Player==player]['On-Off']
+            if y.iloc[0] > 0:
+                plt.text(x, y.iloc[0] + .002, player.split()[1], fontdict=dict(color='black', alpha=0.5))
+        elif player + '*' in play_by_play.Player.values:                
+            x = -.2498
+            y = play_by_play[play_by_play.Player==player + '*']['On-Off']           
+            if y.iloc[0] > 0:
+                plt.text(x, y.iloc[0] + .002, player.split()[1], fontdict=dict(color='black', alpha=0.5))
+        else:
+            continue
+
+    for player in best_players:
+        if player in play_by_play.Player.values:
+            x = .002
+            y = play_by_play[play_by_play.Player==player]['OnCourt']
+            if y.iloc[0] > 0:
+                plt.text(x, y.iloc[0] + .002, player.split()[1], fontdict=dict(color='black', alpha=0.5))
+        elif player + '*' in play_by_play.Player.values:                
+            x = .002
+            y = play_by_play[play_by_play.Player==player + '*']['OnCourt']           
+            if y.iloc[0] > 0:
+                plt.text(x, y.iloc[0] + .002, player.split()[1], fontdict=dict(color='black', alpha=0.5))
+        else:
+            continue
+
+    for player in best_players:
+        if player in advanced_stats.Player.values:
+            x = .2502
+            y = advanced_stats[advanced_stats.Player==player]['BPM']
+            if y.iloc[0] > 0:
+                plt.text(x, y.iloc[0] + .002, player.split()[1], fontdict=dict(color='black', alpha=0.5))
+        elif player + '*' in advanced_stats.Player.values:                
+            x = .2502
+            y = advanced_stats[advanced_stats.Player==player + '*']['BPM']           
+            if y.iloc[0] > 0:
+                plt.text(x, y.iloc[0] + .002, player.split()[1], fontdict=dict(color='black', alpha=0.5))
+        else:
+            continue
+
+    st.pyplot()
+
+
 def main():    
     st.set_option('deprecation.showPyplotGlobalUse', False)
     icon = Image.open(os.path.join(script_directory, 'favicon.ico'))
@@ -67,7 +137,7 @@ def main():
     """)
 
     st.sidebar.header('User Input Features')
-    selected_year = st.sidebar.selectbox('Year', list(reversed(range(1970,2023))))
+    selected_year = st.sidebar.selectbox('Year', list(reversed(range(1977,2023))))
     selected_stat = st.sidebar.selectbox('Player Stats', stat_types, format_func=translate_stat_type)
     playerstats = load_data(selected_year, selected_stat)
 
@@ -89,7 +159,7 @@ def main():
     st.markdown(filedownload(df_selected_team), unsafe_allow_html=True)
 
 
-    col1, col2 = st.columns(2)
+    col1, col2, col3 = st.columns(3)
 
     show_plot = 0
 
@@ -101,6 +171,12 @@ def main():
         # Scatter plot
         if st.button('Points per 75 x TS% Scattergram'):
             show_plot = 2
+    if(selected_year >= 1997):
+        with col3:
+            # Scatter plot
+            if st.button('Impact Metrics'):
+                show_plot = 3   
+        
     
     if show_plot == 1:
         st.header('Intercorrelation Matrix Heatmap')
@@ -149,6 +225,8 @@ def main():
                 continue
 
         st.pyplot()
+    elif show_plot == 3:
+        gen_on_off_stats(selected_year)
     else:
         pass
 
