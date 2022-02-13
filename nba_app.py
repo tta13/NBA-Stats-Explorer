@@ -1,20 +1,16 @@
 import streamlit as st
-import pandas as pd
 import base64
 import os
 from nbanalyzer import *
 from PIL import Image
 
 script_directory = os.getcwd()
-# best_players = ['Nikola Jokić', 'Joel Embiid', 'James Harden', 'Stephen Curry', 'Kevin Durant', 'LeBron James', 'Giannis Antetokounmpo', 
-#     'Kareem Abdul-Jabbar', 'Karl Malone', 'Kobe Bryant', 'Michael Jordan', 'Dirk Nowitzki', 'Wilt Chamberlain',
-#     'Shaquille O\'Neal', 'Carmelo Anthony', 'Moses Malone', 'Elvin Hayes', 'Hakeem Olajuwon', 'Oscar Robertson',
-#     'Dominique Wilkins', 'Tim Duncan', 'Paul Pierce', 'John Havlicek', 'Kevin Garnett', 'Vince Carter',
-#     'Alex English', 'Reggie Miller', 'Jerry West', 'Patrick Ewing', 'Ray Allen', 'Allen Iverson']
 
-@st.cache
-def load_data(year: int, stat_type: str, header: int = 0):
-    return get_players_data(year, stat_type, header)
+def load_data(year: int, stat_type: str):
+    if stat_type == 'play-by-play':
+        return get_players_data(year, stat_type, 1)
+
+    return get_players_data(year, stat_type, 0)
 
 def filedownload(df):
     csv = df.to_csv(index=False)
@@ -54,7 +50,7 @@ def main():
 
     st.sidebar.header('User Input Features')
     selected_year = st.sidebar.selectbox('Year', list(reversed(range(1977,2023))))
-    selected_stat = st.sidebar.selectbox('Player Stats', stat_types[:5], format_func=translate_stat_type)
+    selected_stat = st.sidebar.selectbox('Player Stats', stat_types, format_func=translate_stat_type)
     playerstats = load_data(selected_year, selected_stat)
     
 
