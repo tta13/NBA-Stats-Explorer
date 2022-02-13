@@ -32,8 +32,10 @@ def gen_scoring_efficiency_plot(season: int, best_players: list[str]):
     plt.style.use('seaborn')
     plt.xlabel("Pts. per 75")
     plt.ylabel("TS%")
+    plt.axhline(y=advanced_stats['TS%'].mean(), linestyle='--', color='gray', alpha=.4 ,label='League Avg.')
     plt.scatter(per_75_stats.PTS.values, advanced_stats['TS%'].values, edgecolors='k', alpha=.5)
-    plt.xlim([0, 40])
+    plt.xlim([0,40])
+    plt.legend(frameon=True, edgecolor='black')
 
     add_player_labels(best_players, per_75_stats, advanced_stats, 'PTS', 'TS%', y_offset=.002)
 
