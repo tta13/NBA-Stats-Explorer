@@ -109,9 +109,8 @@ def main():
                 The scatter plot is used to analyze the relation between \"inflation adjusted\" scoring and efficiency from players across the league, 
                 highlighting the top 10 MVP candidates.
             """)
-            with st.spinner('Loading scatter plot'):
-                gen_scoring_efficiency_plot(selected_year, best_players)        
-                st.pyplot()
+            with st.spinner('Loading scatter plot'):                       
+                st.write(gen_scoring_efficiency_plot(selected_year, best_players))
 
         if(selected_year >= 1997):
             with st.expander(f'Impact - {selected_year}'):
@@ -121,6 +120,7 @@ def main():
                     * **On-Off**: Average difference between the Plus/Minus when player is on the court vs. off the court.
                     * **OnCourt**: Plus/Minus Per 100 Possessions (On Court only).
                     * **BPM**: A box score estimate of the points per 100 possessions a player contributed above a league-average player, translated to an average team.
+                    
                     PS: highlighting top MVP cadidates.
                 """)
                 gen_on_off_plot(selected_year, best_players)

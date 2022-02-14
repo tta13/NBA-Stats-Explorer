@@ -1,8 +1,12 @@
+from optparse import Values
+from turtle import width
 import matplotlib.pyplot as plt
 from pandas import DataFrame
 import numpy as np
 import seaborn as sns
 import copy
+import plotly.express as px
+import plotly.graph_objects as go
 from .basketball_reference_api import *
 
 def add_player_labels(players: list[str], df1: DataFrame, df2: DataFrame, x_data: str, y_data: str, x_offset: float = 0., y_offset: float = 0.):
@@ -18,7 +22,7 @@ def add_player_labels(players: list[str], df1: DataFrame, df2: DataFrame, x_data
         else:
             continue
 
-def gen_scoring_efficiency_plot(season: int, best_players: list[str]):
+def gen_scoring_efficiency_plot(season: int, best_players: list[str]) -> go.Figure:
     """
     Generates points per 75 x TS% plot
     """
@@ -29,15 +33,46 @@ def gen_scoring_efficiency_plot(season: int, best_players: list[str]):
     per_100_stats['PTS'] = per_100_stats['PTS'].apply(lambda x: x*.75)
     per_75_stats = per_100_stats
 
-    plt.style.use('seaborn')
-    plt.xlabel("Pts. per 75")
-    plt.ylabel("TS%")
-    plt.axhline(y=advanced_stats['TS%'].mean(), linestyle='--', color='gray', alpha=.4 ,label='League Avg.')
-    plt.scatter(per_75_stats.PTS.values, advanced_stats['TS%'].values, edgecolors='k', alpha=.5)
-    plt.xlim([0,40])
-    plt.legend(frameon=True, edgecolor='black')
+    
+    # Plottings data
+    fig = px.scatter(x=per_75_stats.PTS.values, y=advanced_stats['TS%'].values,
+                     range_x=[0, 40],
+                     opacity=.65,
+                     template="plotly_dark",
+                     hover_name=per_75_stats.Player.values)
+    
+    fig.update_traces(marker=dict(color="#2a87df"))
 
-    add_player_labels(best_players, per_75_stats, advanced_stats, 'PTS', 'TS%', y_offset=.002)
+    
+    fig.add_hline(y=advanced_stats['TS%'].mean(), 
+                  line_width=2, 
+                  line_dash="dash", 
+                  line_color="gray",
+                  opacity=.5,
+                  annotation_text="League Avg.",
+                  annotation_position="bottom right")
+
+    fig.update_xaxes(
+        title_text = "Pts. per 75",
+        title_font = {"size": 15},
+        title_standoff = 20,
+        showgrid = True,
+        showline = True,
+        showticklabels = True,
+        zeroline = True
+    )
+
+    fig.update_yaxes(
+        title_text = "TS%",
+        title_font = {"size": 15},
+        title_standoff = 20,
+        showgrid = True,
+        showline = True,
+        showticklabels = True,
+        zeroline = True
+    )
+
+    return fig
 
 def gen_on_off_plot(season: int, best_players: list[str]):
     """
