@@ -73,7 +73,7 @@ def main():
     st.markdown(filedownload(df_selected_team), unsafe_allow_html=True)
 
     if selected_year < 2022:
-        best_players = get_mvp_voting(selected_year)
+        best_players = get_mvp_voting(selected_year, 5)
     else:
         best_players = ['Nikola Jokić', 'Joel Embiid', 'Chris Paul', 'Stephen Curry', 'Kevin Durant', 'Giannis Antetokounmpo',
             'Ja Morant', 'Luka Dončić', 'Devin Booker', 'DeMar DeRozan', 'Jimmy Butler']
@@ -106,8 +106,7 @@ def main():
         with st.expander(f'Scoring - {selected_year}'):
             st.markdown("""
                 ### Points per 75 possessions x TS% Scatter Plot
-                The scatter plot is used to analyze the relation between \"inflation adjusted\" scoring and efficiency from players across the league, 
-                highlighting the top 10 MVP candidates.
+                The scatter plot is used to analyze the relation between \"inflation adjusted\" scoring and efficiency from players across the league.
             """)
             with st.spinner('Loading scatter plot'):                       
                 st.write(gen_scoring_efficiency_plot(selected_year, best_players))
@@ -120,11 +119,8 @@ def main():
                     * **On-Off**: Average difference between the Plus/Minus when player is on the court vs. off the court.
                     * **OnCourt**: Plus/Minus Per 100 Possessions (On Court only).
                     * **BPM**: A box score estimate of the points per 100 possessions a player contributed above a league-average player, translated to an average team.
-                    
-                    PS: highlighting top MVP cadidates.
-                """)
-                gen_on_off_plot(selected_year, best_players)
-                st.pyplot()
+                """)                
+                st.write(gen_on_off_plot(selected_year, best_players))
 
 if __name__ == '__main__':
     main()
