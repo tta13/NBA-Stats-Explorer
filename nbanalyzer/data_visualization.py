@@ -179,7 +179,7 @@ def gen_playmaking_plot(season: int) -> go.Figure:
     
     # Plottings data
     fig = px.scatter(data_frame=advanced_box_score,
-                     x='Off. Load',
+                     x='Offensive Load',
                      y='Creation',
                      opacity=.65,
                      template="plotly_dark",
@@ -208,3 +208,11 @@ def gen_playmaking_plot(season: int) -> go.Figure:
     )
 
     return fig
+
+def get_player_percentile_from_advanced_stat(year: int, player: str, stat: str) -> float:
+    advanced_box_score = get_advanced_metrics(year)
+    temp = advanced_box_score[f'{stat}'].rank(method='max', pct=True)
+    temp = temp.to_frame()
+    temp['Player'] = advanced_box_score['Player']
+    temp = temp.loc[temp['Player'].str.contains(player)]
+    return temp
