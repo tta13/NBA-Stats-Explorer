@@ -125,6 +125,15 @@ def main():
                 with st.spinner('Loading scatter plot'):                       
                     st.write(gen_shooting_efficiency_plot(selected_year))
 
+            with st.expander(f'Playmaking - {selected_year}'):
+                st.markdown("""
+                    ### Box Creation x Offensive Load Scatter Plot
+                    The scatter plot is used to analyze the relation between a per 100 estimate of the number of true shots created for teammates and 
+                    the percentage of possessions a player is directly or indirectly involved in a true shooting attempt, or commits a turnover.
+                """)
+                with st.spinner('Loading scatter plot'):                       
+                    st.write(gen_playmaking_plot(selected_year))
+
         if selected_year >= 1997:
             with st.expander(f'Impact - {selected_year}'):
                 st.markdown("""
