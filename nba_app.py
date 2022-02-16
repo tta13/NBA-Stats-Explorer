@@ -111,7 +111,17 @@ def main():
             with st.spinner('Loading scatter plot'):                       
                 st.write(gen_scoring_efficiency_plot(selected_year, best_players))
 
-        if(selected_year >= 1997):
+        if selected_year >= 1980:
+            with st.expander(f'Shooting - {selected_year}'):
+                st.markdown("""
+                    ### 3-Point Attempts x 3P% Scatter Plot
+                    The scatter plot is used to analyze the relation between 3-Point Field Goal attempts per 100 possessions and 3-Point Field Goal 
+                    Percentage from players across the league as well as observe the evolution of shooting along the decades.
+                """)
+                with st.spinner('Loading scatter plot'):                       
+                    st.write(gen_shooting_efficiency_plot(selected_year))
+
+        if selected_year >= 1997:
             with st.expander(f'Impact - {selected_year}'):
                 st.markdown("""
                     ### Impact metrics
