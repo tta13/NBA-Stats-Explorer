@@ -57,7 +57,7 @@ def get_advanced_metrics(season: int) -> pd.DataFrame:
     per_game = get_players_data(season, 'per_game')
     league_avg_efg = per_game['eFG%'].mean()
 
-    cols = ['Player','Pos','Tm','Scoring','Efficiency(TS%)','Spacing','Creation','Off. Load']
+    cols = ['Player','Pos','Tm','Scoring','Efficiency(TS%)','Spacing','Creation','Offensive Load']
     table = [[p,pos,tm,pts,ts,spacing(attmpts,pctg,league_avg_efg),box_creation(ast,pts,attmpts,pctg,tov),offensive_load(ast,fga,fta,tov,box_creation(ast,pts,attmpts,pctg,tov))] 
         for p,pos,tm,pts,ts,attmpts,pctg,ast,tov,fga,fta 
         in zip(per_100['Player'],per_100['Pos'],per_100['Tm'],per_100['PTS'],advanced['TS%'],per_100['3PA'],per_100['3P%'],per_100['AST'],per_100['TOV'],per_100['FGA'],per_100['FTA'])]
