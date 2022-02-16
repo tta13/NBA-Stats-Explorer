@@ -3,6 +3,7 @@ import base64
 import os
 from nbanalyzer import *
 from PIL import Image
+import time
 
 script_directory = os.getcwd()
 
@@ -133,6 +134,31 @@ def main():
                 """)
                 with st.spinner('Loading scatter plot'):                       
                     st.write(gen_playmaking_plot(selected_year))
+            
+            with st.expander('Player Finder'):
+                st.markdown("""
+                    ### Player Finder
+                    Player Finder is a tool to explore the database and see how specific players are performing relative to the league in 5 major categories 
+                    **Scoring, Efficiency, Shooting, Creation and Load**. Try it out and see how your favorite NBA star is doing :triumph::basketball:.
+                """)
+                advanced_box_score = get_advanced_metrics(selected_year)
+                selected_option = st.selectbox('Player Name', advanced_box_score['Player'])
+                
+                showed_name = False
+                
+                if selected_option is not '':
+                    with st.spinner('Loading player summary'):
+                        for stat in ['Scoring','Efficiency(TS%)','Spacing','Creation','Offensive Load']:
+                            result = get_player_percentile_from_advanced_stat(advanced_box_score, selected_option, stat)
+                            if result.empty:
+                                break
+                            if not showed_name:
+                                player_name = result.iloc[0]['Player']
+                                st.markdown(f'#### {player_name} Summary')
+                                showed_name = True
+                            player_stat = int(result.iloc[0][stat] * 100)
+                            st.markdown(f'{stat} - {ordinal(player_stat)} Percentile')
+                            st.progress(player_stat)
 
         if selected_year >= 1997:
             with st.expander(f'Impact - {selected_year}'):

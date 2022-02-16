@@ -209,10 +209,10 @@ def gen_playmaking_plot(season: int) -> go.Figure:
 
     return fig
 
-def get_player_percentile_from_advanced_stat(year: int, player: str, stat: str) -> float:
-    advanced_box_score = get_advanced_metrics(year)
+def get_player_percentile_from_advanced_stat(df: DataFrame, player: str, stat: str) -> float:
+    advanced_box_score = df
     temp = advanced_box_score[f'{stat}'].rank(method='max', pct=True)
     temp = temp.to_frame()
     temp['Player'] = advanced_box_score['Player']
-    temp = temp.loc[temp['Player'].str.contains(player)]
+    temp = temp.loc[temp['Player'].str.match(player)]
     return temp
