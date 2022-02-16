@@ -146,7 +146,7 @@ def main():
                 
                 showed_name = False
                 
-                if selected_option is not '':
+                if selected_option != '':
                     with st.spinner('Loading player summary'):
                         for stat in ['Scoring','Efficiency(TS%)','Spacing','Creation','Offensive Load']:
                             result = get_player_percentile_from_advanced_stat(advanced_box_score, selected_option, stat)
