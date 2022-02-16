@@ -9,6 +9,7 @@ from .basketball_reference_api import *
 
 SCORING_PLOT_COLOR = '#2a87df'
 SHOOTING_PLOT_COLOR = '#6cc644'
+PLAYMAKING_PLOT_COLOR = '#f5982c'
 
 def gen_scoring_efficiency_plot(season: int, best_players: list[str]) -> go.Figure:
     """
@@ -160,6 +161,44 @@ def gen_shooting_efficiency_plot(season: int, minimum_attempts=2) -> go.Figure:
 
     fig.update_yaxes(
         title_text = "3P%",
+        title_font = {"size": 15},
+        title_standoff = 20,
+        showgrid = True,
+        showline = True,
+        showticklabels = True,
+        zeroline = True
+    )
+
+    return fig
+
+def gen_playmaking_plot(season: int) -> go.Figure:
+    """
+    Generates Box Creation x Offensive Load% plot
+    """
+    advanced_box_score = get_advanced_metrics(season)
+    
+    # Plottings data
+    fig = px.scatter(data_frame=advanced_box_score,
+                     x='Off. Load',
+                     y='Creation',
+                     opacity=.65,
+                     template="plotly_dark",
+                     hover_name='Player')
+    
+    fig.update_traces(marker=dict(color=PLAYMAKING_PLOT_COLOR))
+
+    fig.update_xaxes(
+        title_text = "Offensive Load",
+        title_font = {"size": 15},
+        title_standoff = 20,
+        showgrid = True,
+        showline = True,
+        showticklabels = True,
+        zeroline = True
+    )
+
+    fig.update_yaxes(
+        title_text = "Box Creation",
         title_font = {"size": 15},
         title_standoff = 20,
         showgrid = True,
