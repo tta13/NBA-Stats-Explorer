@@ -7,6 +7,8 @@ import plotly.express as px
 import plotly.graph_objects as go
 from .basketball_reference_api import *
 
+SCORING_PLOT_COLOR = '#2a87df'
+SHOOTING_PLOT_COLOR = '#6cc644'
 
 def gen_scoring_efficiency_plot(season: int, best_players: list[str]) -> go.Figure:
     """
@@ -17,8 +19,8 @@ def gen_scoring_efficiency_plot(season: int, best_players: list[str]) -> go.Figu
     
     # Calculating points per 75 
     per_100_stats['PTS'] = per_100_stats['PTS'].apply(lambda x: x*.75)
-    per_75_stats = per_100_stats
-
+    per_75_stats = per_100_stats    
+    avg_ts_percentage = round(advanced_stats['TS%'].mean(), 3)
     
     # Plottings data
     fig = px.scatter(x=per_75_stats.PTS.values, y=advanced_stats['TS%'].values,
@@ -27,15 +29,15 @@ def gen_scoring_efficiency_plot(season: int, best_players: list[str]) -> go.Figu
                      template="plotly_dark",
                      hover_name=per_75_stats.Player.values)
     
-    fig.update_traces(marker=dict(color="#2a87df"))
+    fig.update_traces(marker=dict(color=SCORING_PLOT_COLOR))
 
     
-    fig.add_hline(y=advanced_stats['TS%'].mean(), 
+    fig.add_hline(y=avg_ts_percentage, 
                   line_width=2, 
                   line_dash="dash", 
                   line_color="gray",
                   opacity=.5,
-                  annotation_text="League Avg.",
+                  annotation_text=f"League Avg.={avg_ts_percentage}",
                   annotation_position="bottom right")
 
     fig.update_xaxes(
@@ -119,3 +121,51 @@ def draw_intercorrelation_heatmap(season: int):
     with sns.axes_style("white"):
         f, ax = plt.subplots(figsize=(7, 5))
         ax = sns.heatmap(corr, mask=mask, vmax=1, square=True)
+
+def gen_shooting_efficiency_plot(season: int, minimum_attempts=2) -> go.Figure:
+    """
+    Generates 3PA per 100 possessions x 3P% plot
+    """
+    per_100_stats = copy.deepcopy(get_players_data(season, 'per_poss'))
+    per_100_stats = per_100_stats[per_100_stats['3PA'] >= minimum_attempts]
+    avg_3p_percentage = round(per_100_stats['3P%'].mean(), 3)
+    
+    # Plottings data
+    fig = px.scatter(data_frame=per_100_stats,
+                     x='3PA',
+                     y='3P%',
+                     opacity=.65,
+                     template="plotly_dark",
+                     hover_name='Player')
+    
+    fig.update_traces(marker=dict(color=SHOOTING_PLOT_COLOR))
+
+    fig.add_hline(y=avg_3p_percentage, 
+                  line_width=2,
+                  line_dash="dash", 
+                  line_color="gray",
+                  opacity=.5,
+                  annotation_text=f"League Avg.={avg_3p_percentage}",
+                  annotation_position="bottom right")
+
+    fig.update_xaxes(
+        title_text = "3-Point Attempts per 100",
+        title_font = {"size": 15},
+        title_standoff = 20,
+        showgrid = True,
+        showline = True,
+        showticklabels = True,
+        zeroline = True
+    )
+
+    fig.update_yaxes(
+        title_text = "3P%",
+        title_font = {"size": 15},
+        title_standoff = 20,
+        showgrid = True,
+        showline = True,
+        showticklabels = True,
+        zeroline = True
+    )
+
+    return fig
