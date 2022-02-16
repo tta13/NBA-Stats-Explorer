@@ -11,6 +11,8 @@ ordinal = lambda n: "%d%s" % (n,"tsnrhtdd"[(n//10%10!=1)*(n%10<4)*n%10::4])
 def load_data(year: int, stat_type: str):
     if stat_type == 'play-by-play':
         return get_players_data(year, stat_type, 1)
+    elif stat_type == 'advanced_box_score':
+        return get_advanced_metrics(year)
 
     return get_players_data(year, stat_type, 0)
 
@@ -33,6 +35,8 @@ def translate_stat_type(stat_type):
         return 'Per 100 Possessions'    
     elif stat_type == 'play-by-play':
         return 'Play-by-Play'
+    elif stat_type == 'advanced_box_score':
+        return 'Advanced Box Score'
     return 'None'
 
 def main():    
