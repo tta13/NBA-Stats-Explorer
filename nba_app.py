@@ -58,7 +58,7 @@ def main():
 
     st.sidebar.header('User Input Features')
     selected_year = st.sidebar.selectbox('Year', list(reversed(range(1977,2023))))
-    selected_stat = st.sidebar.selectbox('Player Stats', stat_types, format_func=translate_stat_type)
+    selected_stat = st.sidebar.selectbox('Player Stats', STAT_TYPES, format_func=translate_stat_type)
     playerstats = load_data(selected_year, selected_stat)
     
 
@@ -156,7 +156,7 @@ def main():
                 
                 if selected_player != '':
                     with st.spinner('Loading player summary'):
-                        for stat in ['Scoring','Efficiency(TS%)','Spacing','Creation','Offensive Load']:
+                        for stat in ADVANCED_BOX_SCORE_COLS[3:]:
                             result = get_player_percentile_from_advanced_stat(advanced_box_score, selected_player, stat)
                             if result.empty:
                                 break
