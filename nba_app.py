@@ -6,6 +6,7 @@ from PIL import Image
 import time
 
 script_directory = os.getcwd()
+PROGRESS_BAR_CUSTOM_COLOR = '#f63366'
 
 ordinal = lambda n: "%d%s" % (n,"tsnrhtdd"[(n//10%10!=1)*(n%10<4)*n%10::4])
 
@@ -141,6 +142,13 @@ def main():
                     Player Finder is a tool to explore the database and see how specific players are performing relative to the league in 5 major categories 
                     **Scoring, Efficiency, Shooting, Creation and Load**. Try it out and see how your favorite NBA star is doing :triumph::basketball:.
                 """)
+                st.markdown(f"""
+                    <style>
+                    .st-g3 {{
+                        background-color: {PROGRESS_BAR_CUSTOM_COLOR};
+                    }}
+                    </style>
+                """, unsafe_allow_html=True)
                 advanced_box_score = get_advanced_metrics(selected_year)
                 selected_player = st.selectbox('Player Name', advanced_box_score['Player'])
                 
