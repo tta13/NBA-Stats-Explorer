@@ -2,15 +2,16 @@ from math import exp
 import pandas as pd
 from streamlit import cache
 
-base_url = 'https://www.basketball-reference.com/'
-stat_types = ['per_game', 'totals', 'per_minute', 'advanced', 'per_poss', 'play-by-play', 'advanced_box_score']
+BASE_URL = 'https://www.basketball-reference.com/'
+STAT_TYPES = ['per_game', 'totals', 'per_minute', 'advanced', 'per_poss', 'play-by-play', 'advanced_box_score']
+ADVANCED_BOX_SCORE_COLS = ['Player','Pos','Tm','Scoring Rate','Efficiency(TS%)','Spacing','Creation','Offensive Load']
 
 @cache
 def get_players_data(season: int, stat_type: str, header: int = 0, filter_games=True) -> pd.DataFrame:
     """
     Returns a dataframe representing player data from the season and stat type selected web scrapping basketball reference website
     """
-    url = f'{base_url}leagues/NBA_{str(season)}_{stat_type}.html'
+    url = f'{BASE_URL}leagues/NBA_{str(season)}_{stat_type}.html'
     print(f'GET {url}')
     html = pd.read_html(url, header = header)
     df = html[0]
@@ -41,7 +42,7 @@ def get_mvp_voting(season: int, top=10) -> list:
     """
     Returns top mvp candidates from season
     """
-    url = f'{base_url}awards/awards_{str(season)}.html#mvp'
+    url = f'{BASE_URL}awards/awards_{str(season)}.html#mvp'
     html = pd.read_html(url, header = 1)
     df = html[0]
     player_stats = df.drop(['Rank'], axis=1)
@@ -57,11 +58,10 @@ def get_advanced_metrics(season: int) -> pd.DataFrame:
     per_game = get_players_data(season, 'per_game')
     league_avg_efg = per_game['eFG%'].mean()
 
-    cols = ['Player','Pos','Tm','Scoring','Efficiency(TS%)','Spacing','Creation','Offensive Load']
     table = [[p,pos,tm,pts,ts,spacing(attmpts,pctg,league_avg_efg),box_creation(ast,pts,attmpts,pctg,tov),offensive_load(ast,fga,fta,tov,box_creation(ast,pts,attmpts,pctg,tov))] 
         for p,pos,tm,pts,ts,attmpts,pctg,ast,tov,fga,fta 
         in zip(per_100['Player'],per_100['Pos'],per_100['Tm'],per_100['PTS'],advanced['TS%'],per_100['3PA'],per_100['3P%'],per_100['AST'],per_100['TOV'],per_100['FGA'],per_100['FTA'])]
-    return pd.DataFrame(table, columns=cols)    
+    return pd.DataFrame(table, columns=ADVANCED_BOX_SCORE_COLS)    
 
 def spacing(attemps: float, percentage: float, league_avg_efg: float) -> float:
     """
