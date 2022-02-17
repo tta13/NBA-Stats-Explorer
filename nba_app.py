@@ -128,7 +128,7 @@ def main():
 
             with st.expander(f'Playmaking - {selected_year}'):
                 st.markdown("""
-                    ### Box Creation x Offensive Load Scatter Plot
+                    ### Offensive Load x Box Creation Scatter Plot
                     The scatter plot is used to analyze the relation between a per 100 estimate of the number of true shots created for teammates and 
                     the percentage of possessions a player is directly or indirectly involved in a true shooting attempt, or commits a turnover.
                 """)
@@ -142,19 +142,19 @@ def main():
                     **Scoring, Efficiency, Shooting, Creation and Load**. Try it out and see how your favorite NBA star is doing :triumph::basketball:.
                 """)
                 advanced_box_score = get_advanced_metrics(selected_year)
-                selected_option = st.selectbox('Player Name', advanced_box_score['Player'])
+                selected_player = st.selectbox('Player Name', advanced_box_score['Player'])
                 
                 showed_name = False
                 
-                if selected_option != '':
+                if selected_player != '':
                     with st.spinner('Loading player summary'):
                         for stat in ['Scoring','Efficiency(TS%)','Spacing','Creation','Offensive Load']:
-                            result = get_player_percentile_from_advanced_stat(advanced_box_score, selected_option, stat)
+                            result = get_player_percentile_from_advanced_stat(advanced_box_score, selected_player, stat)
                             if result.empty:
                                 break
                             if not showed_name:
                                 player_name = result.iloc[0]['Player']
-                                st.markdown(f'#### {player_name} Summary')
+                                st.markdown(f'#### {player_name} {selected_year} Summary')
                                 showed_name = True
                             player_stat = int(result.iloc[0][stat] * 100)
                             st.markdown(f'{stat} - {ordinal(player_stat)} Percentile')
