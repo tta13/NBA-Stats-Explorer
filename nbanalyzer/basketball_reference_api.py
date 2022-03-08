@@ -1,4 +1,5 @@
 from math import exp
+from os import remove
 import pandas as pd
 from streamlit import cache
 
@@ -7,7 +8,7 @@ STAT_TYPES = ['per_game', 'totals', 'per_minute', 'advanced', 'per_poss', 'play-
 ADVANCED_BOX_SCORE_COLS = ['Player','Pos','Tm','Scoring Rate','Efficiency(TS%)','Spacing','Creation','Offensive Load']
 
 @cache
-def get_players_data(season: int, stat_type: str, header: int = 0, filter_games=True) -> pd.DataFrame:
+def get_players_data(season: int, stat_type: str, header: int = 0, filter_games=True, remove_duplicates=True) -> pd.DataFrame:
     """
     Returns a dataframe representing player data from the season and stat type selected web scrapping basketball reference website
     """
@@ -35,6 +36,14 @@ def get_players_data(season: int, stat_type: str, header: int = 0, filter_games=
         threshold = max_games_played // 2   
         player_stats = player_stats[player_stats['G'] >= threshold]
 
+    if remove_duplicates:
+        player_stats.drop_duplicates(subset=['Player'], inplace=True)
+        player_stats['Pos'].replace(['SG-PG','SG-SF','SG-PF','SG-C'], 'SG', inplace=True)        
+        player_stats['Pos'].replace(['PG-SG','PG-SF','PG-PF','PG-C'], 'PG', inplace=True)
+        player_stats['Pos'].replace(['SF-PG','SF-SG','SF-PF','SF-C'], 'SF', inplace=True)
+        player_stats['Pos'].replace(['PF-PG','PF-SF','PF-SF','PF-C'], 'PF', inplace=True)
+        player_stats['Pos'].replace(['C-PG','C-SF','C-PF','C-SG'], 'C', inplace=True)        
+        
     return player_stats
 
 @cache
