@@ -1,10 +1,10 @@
-import copy
-from pandas import DataFrame
 import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
 import plotly.express as px
 import plotly.graph_objects as go
+from pandas import DataFrame, merge
+from copy import deepcopy
 from .basketball_reference_api import *
 
 SCORING_PLOT_COLOR = '#2a87df'
@@ -15,22 +15,22 @@ def gen_scoring_efficiency_plot(season: int, best_players: list[str]) -> go.Figu
     """
     Generates points per 75 x TS% plot
     """
-    per_100_stats = copy.deepcopy(get_players_data(season, 'per_poss'))
+    per_100_stats = deepcopy(get_players_data(season, 'per_poss'))
     advanced_stats = get_players_data(season, 'advanced')
     
     # Calculating points per 75 
     per_100_stats['PTS'] = per_100_stats['PTS'].apply(lambda x: x*.75)
     per_75_stats = per_100_stats    
     avg_ts_percentage = round(advanced_stats['TS%'].mean(), 3)
+    combined = merge(per_75_stats, advanced_stats, on='Player', suffixes=('', '_y'))
     
     # Plottings data
-    fig = px.scatter(x=per_75_stats.PTS.values, y=advanced_stats['TS%'].values,
+    fig = px.scatter(data_frame=combined, x='PTS', y='TS%',
+                     hover_name='Player',
+                     color='Pos',
                      range_x=[0, 40],
                      opacity=.65,
-                     template="plotly_dark",
-                     hover_name=per_75_stats.Player.values)
-    
-    fig.update_traces(marker=dict(color=SCORING_PLOT_COLOR))
+                     template="plotly_dark")
 
     
     fig.add_hline(y=avg_ts_percentage, 
@@ -127,7 +127,7 @@ def gen_shooting_efficiency_plot(season: int, minimum_attempts=2) -> go.Figure:
     """
     Generates 3PA per 100 possessions x 3P% plot
     """
-    per_100_stats = copy.deepcopy(get_players_data(season, 'per_poss'))
+    per_100_stats = deepcopy(get_players_data(season, 'per_poss'))
     per_100_stats = per_100_stats[per_100_stats['3PA'] >= minimum_attempts]
     avg_3p_percentage = round(per_100_stats['3P%'].mean(), 3)
     
@@ -137,9 +137,8 @@ def gen_shooting_efficiency_plot(season: int, minimum_attempts=2) -> go.Figure:
                      y='3P%',
                      opacity=.65,
                      template="plotly_dark",
-                     hover_name='Player')
-    
-    fig.update_traces(marker=dict(color=SHOOTING_PLOT_COLOR))
+                     hover_name='Player',
+                     color='Pos')
 
     fig.add_hline(y=avg_3p_percentage, 
                   line_width=2,
@@ -183,9 +182,8 @@ def gen_playmaking_plot(season: int) -> go.Figure:
                      y='Creation',
                      opacity=.65,
                      template="plotly_dark",
-                     hover_name='Player')
-    
-    fig.update_traces(marker=dict(color=PLAYMAKING_PLOT_COLOR))
+                     hover_name='Player',
+                     color='Pos')
 
     fig.update_xaxes(
         title_text = "Offensive Load",
